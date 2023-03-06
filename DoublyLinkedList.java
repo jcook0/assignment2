@@ -97,25 +97,27 @@ public class DoublyLinkedList<T extends Comparable<T>> {
 		}
 		
 		NodeType<T> curNode = head;
+		
+		// inserting at the head of the list
+		if (head.info.compareTo(item) == 1) {
+			newNode.next = head;
+			head = newNode; 
+			return;
+		}
 				
 		while (curNode != null) {
-			if (curNode.info.compareTo(item) == 1) { // curNode.info is greater than item
-				newNode.next = curNode;
-				
-				if (curNode.back != null) {
-					curNode.back = newNode;
-				}
-				
-				if (head == curNode) {
-					newNode = head;
-				}
-				
+			if (curNode.info.compareTo(item) == 1 ) { // curNode.info is greater than item		
+				if (curNode.next!=null) {
+					newNode.next = curNode;
+				}			
+				newNode.back = curNode.back;
+				curNode.back.next = newNode;
 				this.length++;
 				
 				break;
 			}
 			
-			// if the end of the linked list is reached
+			// if the end of the linked list is reached, insert the node
 			if (curNode.next == null) {	
 				curNode.next = newNode;
 				newNode.back = curNode;	
