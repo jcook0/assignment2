@@ -1,237 +1,202 @@
+package assignment2;
 
-
-import java.util.Stack;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Scanner;
 
 /*
- * DoublyLinkedList.java
+ * LinkedListDriver.java
  * 
- * A sorted doubly linked list implementation that has unique elements. 
- * Each node can point to the next or previous node. 
  * 
- 	void insertItem(T item)
-	void deleteItem(T item)
-	int length()
-	boolean doesItemExist()
-	void print()
-	void printReverse()
-
+ * 
+ * Commands:
+ *  
+	(i) - Insert value
+	(d) - Delete value
+	(p) - Print list
+	(l) - Length
+	(t) - Print reverse
+	(r) - Reverse list
+	(b) - Delete Subsection
+	(s) - Swap Alternate
+	(q) - Quit program
+ *
  */
 
-public class DoublyLinkedList<T extends Comparable<T>> {
+public class LinkedListDriver {
 	
-	private NodeType<T> head;
-	private int length;	
+	public static DoublyLinkedList linkedList = null;
+	public static String listType = "";
+	public static Scanner scanner = new Scanner(System.in);
 	
-	// constructor
-	public DoublyLinkedList() {
-		
+	// Takes in a string and returns it as a int, double, or string.
+	public static Comparable convertStrToListType(String val) {
+    	if (listType.equals("i")) {
+        	return Integer.valueOf(val);
+        } else if (listType.equals("d")) {
+        	return Double.valueOf(val);
+        }
+		return val;
 	}
 	
-	// doesItemExist()
-	// takes in a parameter returns true if the item is present or false if it's not found.
-	public boolean doesItemExist(T item) {
-		if (head == null) {
-			return false;
-		} 
+	public static void processCommand(String cmd) {
+		char char1 = cmd.charAt(0); // command
 		
-		NodeType<T> curNode = head;
-		
-		while (curNode != null) {
-			
-			if (curNode.info.compareTo(item) == 0) {
-				System.out.println("Item already exists");
-				return true;
-			}
-			
-			if (curNode.next == null) {
-				break;
-			}
-			
-			curNode = curNode.next;
-		}
-		
-		return false;
-	}
-	
-	public void deleteItem(T item) {
-		if (head == null) {
-			return;
-		} 
-		
-		NodeType<T> curr = head;
-	 
-	    while (curr != null) {
-	        if (curr.info.compareTo(item) == 0) { // item found
-	        	// if curr is the head
-	            if (curr.back == null) {
-	                head = curr.next;
-	            } else {
-	                curr.back.next = curr.next;
-	            }
-	            
-	            if (curr.next != null) {
-	                curr.next.back = curr.back;
-	            }
-	            
-	            length--;
-	            
-	            return;
-	        }      
-	        curr = curr.next;
-	    }
-	}
-	
-	public void insertItem(T item) {
-		// creates the node object to insert
-		NodeType<T> newNode = new NodeType<T>();
-		newNode.info = item;
-		
-		if (head == null) {
-			head = newNode;
-			return;
-		}
-		
-		// calling doesItemExist() makes this operation slower
-		if (doesItemExist(item) == true) {
-			return;
-		}
-		
-		NodeType<T> curNode = head;
-		
-		// inserting at the head of the list
-		if (head.info.compareTo(item) == 1) {
-			newNode.next = head;
-			head = newNode; 
-			return;
-		}
+		switch (char1) {
+			case 'i': //insert value		
+				System.out.print("The list is: ");
+				linkedList.print();
 				
-		while (curNode != null) {
-			if (curNode.info.compareTo(item) == 1 ) { // curNode.info is greater than item		
-				if (curNode.next!=null) {
-					newNode.next = curNode;
-				}			
-				newNode.back = curNode.back;
-				curNode.back.next = newNode;
-				this.length++;
+				System.out.print("Enter a value to insert: ");
+				String val = scanner.next();
+				
+				linkedList.insertItem(convertStrToListType(val));
+				
+				System.out.print("The list is: ");
+				linkedList.print();
+				
+				System.out.print("The reversed list is: ");
+				linkedList.printReverse();
 				
 				break;
-			}
-			
-			// if the end of the linked list is reached, insert the node
-			if (curNode.next == null) {	
-				curNode.next = newNode;
-				newNode.back = curNode;	
-				this.length++;
+			case 'd': //delete value
+				
+				System.out.print("The list is: ");
+				linkedList.print();
+				
+				System.out.print("Enter a value to delete: ");
+				String val2 = scanner.next();
+				
+				linkedList.deleteItem(convertStrToListType(val2));
+				
+				System.out.print("The list is: ");
+				linkedList.print();
+				
+				System.out.print("The reversed list is: ");
+				linkedList.printReverse();
+				
+				
 				break;
-			}
-			
-			curNode = curNode.next;
-		}
-	}
+				
+			case 't': //print reverse
+				
+				System.out.print("The reversed list is: ");
+				linkedList.printReverse();
 
-	public int length() {
-		if (head == null) {
-			this.length = 0;
-		}
-		
-		return this.length;
-	}
-	
-	public void print() {
-		if (head == null) {
-			return;
-		} 
-		
-		NodeType<T> curNode = head;
-		
-		while (curNode != null) {
-			System.out.print(curNode.info + " ");
-			curNode = curNode.next;
-		}
-		
-		System.out.println();
-	}
-	
-	public void printReverse() {
-		Stack<T> stack = new Stack<T>(); // stack
-		NodeType<T> curNode = head;
-		
-		while (curNode != null) {
-			stack.push(curNode.info); //add to stack
-						
-			if (curNode.next == null) {
 				break;
-			}
-			
-			curNode = curNode.next;
+			case 'r': //reverse list 
+				
+				System.out.print("Input list: ");
+				linkedList.print();
+				
+				linkedList.reverseList();
+				
+				System.out.print("The new list is: ");
+				linkedList.print();
+				break;
+			case 's': //swap alternate
+				
+				System.out.print("Input list: ");
+				linkedList.print();
+				
+				linkedList.swapAlternate();
+				
+				System.out.print("The new list is: ");
+				linkedList.print();
+				
+				break;
+			case 'b': //delete subsection	
+				Comparable l;
+				Comparable u;
+				
+				System.out.print("Enter the lower bound: ");
+				l = convertStrToListType(scanner.next());
+				
+				System.out.print("Enter the upper bound: ");
+				u = convertStrToListType(scanner.next());
+				
+				System.out.print("The original list is: ");
+				linkedList.print();
+				
+				linkedList.deleteSubsection(l, u);
+				
+				System.out.print("The modified list is: ");
+				linkedList.print();
+				
+				System.out.print("The reverse list is: ");
+				linkedList.printReverse();
+				
+				break;
+			case 'p': //print
+				
+				System.out.print("The list is: ");
+				linkedList.print();
+				
+				break;
+			case 'l': //length
+				System.out.println("The length of the list is " + linkedList.length());		
+				break;
+			case 'q': //quit
+				System.exit(0);
+				break;
 		}
-		
-		while(stack.size() > 0) {
-			System.out.print(stack.pop() + " "); // pop off the stack
-		}
-		
-		System.out.println(); 
-		
 	}
-	
-	public void deleteSubsection(T lower, T upper) {
-		if (head == null) {
-			return;
-		}
-		
-		NodeType<T> curNode = head;		
-		
-		while (curNode != null) {
-			//System.out.print(curNode.info + " ");	
-			
-			if (curNode.info.compareTo(lower) == -1 || curNode.info.compareTo(upper) == -1)
-			{
-				deleteItem(curNode.info);
-			}
 
-			// end of list reached
-			if (curNode.next == null) {
-				return;
-			}
-			
-			curNode = curNode.next;
-		}
-	}
-	
-	public void reverseList() {
-		if (head == null) {
-			return;
-		}
+	@SuppressWarnings("unchecked")
+	public static void main(String[] args) {	
+		String fileName = null;
 		
-        NodeType<T> curNode = head;
-        NodeType<T> tempNode = null;
+        if (args.length != 1) {
+            System.err.println("Usage: java LinkedListDriver <file name>");
+            //System.exit(1);
+            fileName = "int-input.txt";
+        }
 
-        while (curNode != null) {
-        	tempNode = curNode.back;
-        	curNode.back = curNode.next;
-        	curNode.next = tempNode;
-        	curNode = curNode.back;
-        	
-        	if (curNode.next == null) {
-        		break;
-        	}
+        System.out.print("Enter list type (i - int, d - double, s - std:String): ");
+        listType = scanner.nextLine();
         
-        }  
-        if (tempNode != null) {
-            head = tempNode.back;
+        // initialize the doubly linked list
+        if (listType.equals("i")) {
+        	linkedList = new DoublyLinkedList<Integer>();
+        } else if (listType.equals("d")) {
+        	linkedList = new DoublyLinkedList<Double>();
+        } else if (listType.equals("s")) {
+        	linkedList = new DoublyLinkedList<String>();
         }
         
-
+        // parse the file 
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line = reader.readLine();
+            String[] values = line.split(" ");
+            
+            // building the doubly linked list
+            for (String value : values) {
+            	if (listType.equals("i")) {
+                	linkedList.insertItem(Integer.valueOf(value));
+                } else if (listType.equals("d")) {
+                	linkedList.insertItem(Double.valueOf(value));
+                } else if (listType.equals("s")) {
+                	linkedList.insertItem(value);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+            System.exit(1);
+        }
+        
+        // reading user input
+	    while (true) {
+	    	System.out.print("Enter a command: ");
+	    	String cmd = scanner.next();
+	    	
+	    	if (cmd.equals("q")) { //quit
+	    		break;
+	    	}
+	    	
+	    	processCommand(cmd);	
+	    }
+	    
+	    scanner.close();
 	}
-
-    public void swapAlternate() {
-		if (head == null) {
-			return;
-		}
-		
-		
-		
-    }
-	
-
-};
+}
